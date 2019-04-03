@@ -11,7 +11,7 @@ function createWindow () {
     // minWidth: 400
   })
   // and load the index.html of the app.
-  win.setMenu(null);
+  // win.setMenu(null);
   win.loadFile('index.html')
 }
 
