@@ -1,4 +1,5 @@
-const fs = require('fs'); 
+var remote = require('electron').remote
+const fs = remote.require('fs');
 const PIXI = require('pixi.js');
 let canvas = document.getElementById('myCanvas');
 const app = new PIXI.Application({
@@ -8,6 +9,11 @@ const app = new PIXI.Application({
     backgroundColor: 0x061639
 });
 
+fs.readdir('/', (files)=>{
+    for (const file in files) {
+        console.log(file);
+    }
+})
 app.renderer.view.style.position = "absolute";
 app.renderer.view.style.display = "block";
 app.renderer.autoResize = true;
