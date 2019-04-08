@@ -1,4 +1,6 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
+const fs = require('fs');
+let currentDir = [];
 //TODO:
 //https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
 //Use the link above to try and send messages between script.js and main.js
@@ -18,5 +20,13 @@ function createWindow () {
   // and load the index.html of the app.
   // win.setMenu(null);
   win.loadFile('index.html')
+  fs.readdir('/', (err, files) => {
+    app.emit('files');
+    currentDir = files;
+  })
 }
 app.on('ready', createWindow)
+
+ipcMain.on('files', (event, data) => {
+  event.sender.send('fileReply', currentDir);
+})
