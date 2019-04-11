@@ -3,7 +3,8 @@ var ipc = require('electron').ipcRenderer;
 const fs = require('fs');
 const PIXI = require('pixi.js');
 let canvas = document.getElementById('myCanvas');
-let currentDir = []
+let currentDir = ""
+let currentFiles = [];
 const app = new PIXI.Application({
     view: canvas,
     width: window.innerWidth,
@@ -22,9 +23,13 @@ app.renderer.autoResize = true;
 app.renderer.resize(window.innerWidth, window.innerHeight);
 
 ipc.on('fileReply', (event ,data) => {
-    currentDir = data;
-
+    //console.log(data);
     //TODO: Make file sprites appear
+    for (const file in data) {
+        let temp = new File(data[file]);
+        console.log(temp.filename);
+    }
+
 
 })
 
@@ -36,3 +41,11 @@ img.y = 0;
 app.stage.addChild(img);
 
 ipc.send('files', 'send files plz');
+
+//Holds the information and methods for Files
+class File {
+    
+    constructor(filename){
+        this.filename = filename;
+    }
+}

@@ -16,13 +16,15 @@ function createWindow () {
     // maxWidth: 400, 
     // minHeight:700, 
     // minWidth: 400
+    nodeIntegration: true
   })
   // and load the index.html of the app.
   // win.setMenu(null);
   win.loadFile('index.html')
-  fs.readdir('/', (err, files) => {
-    app.emit('files');
+  fs.readdir('.', (err, files) => {
     currentDir = files;
+    app.emit('files');
+    console.log(hideHiddenFiles(files));
   })
 }
 app.on('ready', createWindow)
@@ -30,3 +32,16 @@ app.on('ready', createWindow)
 ipcMain.on('files', (event, data) => {
   event.sender.send('fileReply', currentDir);
 })
+
+function hideHiddenFiles(files){
+  let filesToShow = [];
+  for (const i in files) {
+
+    if(files[i].charAt(0) === '.'){
+      continue;
+    } else {
+      filesToShow.push(files[i]);
+    }
+  }
+  return filesToShow;
+}

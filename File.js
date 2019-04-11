@@ -3,10 +3,13 @@ class File {
     image = null;
 
 
-    constructor(path, image){
+    constructor(path){
         this.path = path;
-        this.image = image;
     }
 
     
+}
+
+module.exports = {
+    File
 }
