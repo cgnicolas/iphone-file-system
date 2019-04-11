@@ -68,9 +68,10 @@ ipc.on('fileReply', (event ,data) => {
     clearFiles(app.stage);
 
     if(!isRoot){
-
+        //TODO: Render back button
+        parent = data.parent;
+        console.log(parent);
     }
-    console.log(data.files);
 
     let x = 26.5;
     let y = 60;
