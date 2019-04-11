@@ -43,7 +43,11 @@ ipcMain.on('files', (event, data) => {
 function fetchFilesAt(directory, event){
   fs.readdir(directory, (err, files) => {
     app.emit('files');
-    event.sender.send('fileReply', hideHiddenFiles(files));
+    let data = {
+      files: hideHiddenFiles(files),
+      parent: '/' + currentDir.join('/')
+    }
+    event.sender.send('fileReply', data);
   })
 }
 

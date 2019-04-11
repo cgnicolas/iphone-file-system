@@ -7,6 +7,7 @@ let currentDir = ""
 let currentFiles = [];
 let directory = false;
 let isRoot = true;
+let parent = "";
 const app = new PIXI.Application({
     view: canvas,
     width: window.innerWidth,
@@ -46,6 +47,7 @@ class File {
 
     clicked(){
         ipc.send('files', this.filename)
+        isRoot = false;
     }
 
 
@@ -64,9 +66,15 @@ ipc.on('fileReply', (event ,data) => {
     //console.log(data);
     //TODO: Make file sprites appear
     clearFiles(app.stage);
+
+    if(!isRoot){
+
+    }
+    console.log(data.files);
+
     let x = 26.5;
     let y = 60;
-    for (const file in data) {
+    for (const file in data.files) {
         let size = 65;
         if((file != 0) && (file % 6 === 0)){
             console.log("It equals zero");
@@ -80,7 +88,7 @@ ipc.on('fileReply', (event ,data) => {
         container.width = size;
         container.height = size + 5;
 
-        let text = new PIXI.Text(data[file], {fontFamily : 'Helvetica Neue', fill : 0xffffff, fontSize:12, align : 'center'})
+        let text = new PIXI.Text(data.files[file], {fontFamily : 'Helvetica Neue', fill : 0xffffff, fontSize:12, align : 'center'})
         text.anchor.set(.1, -4.5);
         text.resolution =5;
         text.scale.set(1);
@@ -89,7 +97,7 @@ ipc.on('fileReply', (event ,data) => {
         sprite.width = size;
         sprite.height = size;
 
-        let temp = new File(sprite, data[file]);
+        let temp = new File(sprite, data.files[file]);
         currentFiles.push(temp);
         container.addChild(sprite);
         container.addChild(text)
