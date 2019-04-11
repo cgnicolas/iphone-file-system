@@ -45,8 +45,7 @@ class File {
     }
 
     clicked(){
-        ipc.send('files', this.filepath);
-        this.isRoot = false;
+        ipc.send('files', this.filename)
     }
 
 
