@@ -30,7 +30,7 @@ ipcMain.on('files', (event, data) => {
     fetchFilesAt("/", event);
     started = true;
   } else {
-
+    
   }
 
 })

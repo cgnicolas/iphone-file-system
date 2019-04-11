@@ -61,30 +61,34 @@ ipc.on('fileReply', (event ,data) => {
     //console.log(data);
     //TODO: Make file sprites appear
     let x = 26.5;
-    let y = 50;
+    let y = 60;
     for (const file in data) {
         let size = 65;
         if((file != 0) && (file % 4 === 0)){
             console.log("It equals zero");
             x = 26.5;
-            y += 100;
+            y += 110;
         }
 
-        let img = new PIXI.Sprite.fromImage('images/fileSprite.svg');
-        img.width = size;
-        img.height = size;
-        img.x = x;
-        img.y = y;
+        let container = new PIXI.Container();
+        container.x = x;
+        container.y = y;
+        container.width = size;
+        container.height = size + 5;
 
-        let temp = new File(img, data[file]);
-        console.log(img);
+        let text = new PIXI.Text(data[file], {fontFamily : 'Helvetica Neue', fontSize: 10, fill : 0xffffff, align : 'center'})
+        text.anchor.set(-.1, -5);
+        let sprite = new PIXI.Sprite.fromImage('images/fileSprite.svg');
+        sprite.width = size;
+        sprite.height = size;
+        // sprite.x = x;
+        // sprite.y = y;
+
+        let temp = new File(sprite, data[file]);
         currentFiles.push(temp);
-        
-
-        // let temp = new File(data[file], size, x, y);
-        // // console.log(temp.generateSprite());
-        app.stage.addChild(img);
-        // temp.generateSprite(this.app);
+        container.addChild(sprite);
+        container.addChild(text)
+        app.stage.addChild(container);
         x = x + 95;
 
 
