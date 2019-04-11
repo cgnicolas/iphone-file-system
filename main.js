@@ -5,13 +5,14 @@ let currentDir = [];
 //https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
 //Use the link above to try and send messages between script.js and main.js
 //I.E. Requesting files in current directory
+let started = false;
 
 
 function createWindow () {
   // Create the browser window.
   let win = new BrowserWindow({ 
-    width: 400,
-    height: 700, 
+    width: 414,
+    height: 736, 
     // maxHeight: 700, 
     // maxWidth: 400, 
     // minHeight:700, 
@@ -21,17 +22,26 @@ function createWindow () {
   // and load the index.html of the app.
   // win.setMenu(null);
   win.loadFile('index.html')
-  fs.readdir('.', (err, files) => {
-    currentDir = files;
-    app.emit('files');
-    console.log(hideHiddenFiles(files));
-  })
 }
 app.on('ready', createWindow)
 
 ipcMain.on('files', (event, data) => {
-  event.sender.send('fileReply', currentDir);
+  if(started == false){
+    fetchFilesAt("/", event);
+    started = true;
+  } else {
+
+  }
+
 })
+
+function fetchFilesAt(directory, event){
+  fs.readdir(directory, (err, files) => {
+    currentDir = files;
+    app.emit('files');
+    event.sender.send('fileReply', hideHiddenFiles(files));
+  })
+}
 
 function hideHiddenFiles(files){
   let filesToShow = [];
