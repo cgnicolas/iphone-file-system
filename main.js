@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const fs = require('fs');
 let currentDir = [];
+let isRoot = true;
 //TODO:
 //https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
 //Use the link above to try and send messages between script.js and main.js
@@ -11,8 +12,8 @@ let started = false;
 function createWindow () {
   // Create the browser window.
   let win = new BrowserWindow({ 
-    width: 414,
-    height: 736, 
+    width: 1000,
+    height: 650, 
     // maxHeight: 700, 
     // maxWidth: 400, 
     // minHeight:700, 
@@ -29,15 +30,18 @@ ipcMain.on('files', (event, data) => {
   if(started == false){
     fetchFilesAt("/", event);
     started = true;
+    console.log(currentDir);
   } else {
-    
+    currentDir.push(data);
+    isRoot = false;
+
+    fetchFilesAt('/' + currentDir.join('/'), event);
   }
 
 })
 
 function fetchFilesAt(directory, event){
   fs.readdir(directory, (err, files) => {
-    currentDir = files;
     app.emit('files');
     event.sender.send('fileReply', hideHiddenFiles(files));
   })
