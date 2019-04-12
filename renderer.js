@@ -67,7 +67,7 @@ ipc.on('fileReply', (event ,data) => {
     //console.log(data);
     //TODO: Make file sprites appear
     clearFiles(app.stage);
-
+    pages = []
     if(!isRoot){
         //TODO: Render back button
         parent = data.parent;
@@ -103,6 +103,7 @@ ipc.on('fileReply', (event ,data) => {
         currentFiles.push(temp);
         container.addChild(sprite);
         container.addChild(text)
+        //Filling pages
         if((parseInt(file) + 1) % 24 == 0){
             console.log("Page change");
             pages.push(page);
@@ -113,9 +114,10 @@ ipc.on('fileReply', (event ,data) => {
         x = x + 170;
     }
     pages.push(page);
-    for (const item in pages[0]) {
-        app.stage.addChild(pages[0][item])
-    }
+    // for (const item in pages[0]) {
+    //     app.stage.addChild(pages[0][item])
+    // }
+    displayPage(0);
 
 })
 
@@ -124,5 +126,11 @@ function clearFiles(){
         app.stage.removeChild(app.stage.children[0]);
     }
     currentFiles = [];
-    pages = [];
+}
+
+function displayPage(page){
+    clearFiles();
+    for (const item in pages[page]) {
+        app.stage.addChild(pages[page][item])
+    }
 }
