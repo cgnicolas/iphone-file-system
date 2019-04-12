@@ -60,16 +60,6 @@ class File {
         ipc.send('files', this.filename)
         isRoot = false;
     }
-
-
-    generateSprite(app){
-        let img = new PIXI.Sprite.fromImage('images/fileSprite.svg');
-        img.width = this.size;
-        img.height = this.size;
-        img.x = this.x;
-        img.y = this.y;
-        app.stage.addChild(img);
-    }
 }
 
 /*-------------------- IPC Event Handlers ------------------ */
