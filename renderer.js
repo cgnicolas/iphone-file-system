@@ -21,12 +21,22 @@ app.renderer.view.style.display = "block";
 app.renderer.autoResize = true;
 app.renderer.resize(window.innerWidth, window.innerHeight);
 
-// const img = new PIXI.Sprite.fromImage('images/wallpaper.png');
-// img.width = window.innerWidth;
-// img.height = window.innerHeight;
-// img.x = 0;
-// img.y = 0;
-// app.stage.addChild(img);
+
+
+const img = new PIXI.Sprite.fromImage('images/wallpaper.png');
+img.width = window.innerWidth;
+img.height = window.innerHeight;
+img.x = 0;
+img.y = 0;
+app.stage.addChild(img);
+
+let mainContainer = new PIXI.Container();
+mainContainer.x = 0;
+mainContainer.y = 0;
+mainContainer.height = window.innerHeight;
+mainContainer.width = window.innerWidth;
+
+app.stage.addChild(mainContainer);
 
 ipc.send('files', 'send files plz');
 
@@ -66,7 +76,7 @@ class File {
 ipc.on('fileReply', (event ,data) => {
     //console.log(data);
     //TODO: Make file sprites appear
-    clearFiles(app.stage);
+    clearFiles();
     pages = []
     if(!isRoot){
         //TODO: Render back button
@@ -122,8 +132,8 @@ ipc.on('fileReply', (event ,data) => {
 })
 
 function clearFiles(){
-    while(app.stage.children[0]){
-        app.stage.removeChild(app.stage.children[0]);
+    while(mainContainer.children[0]){
+        mainContainer.removeChild(mainContainer.children[0]);
     }
     currentFiles = [];
 }
@@ -131,6 +141,7 @@ function clearFiles(){
 function displayPage(page){
     clearFiles();
     for (const item in pages[page]) {
-        app.stage.addChild(pages[page][item])
+        // mainContainer.addChild(pages[page][item])
+        mainContainer.addChild(pages[page][item]);
     }
 }
