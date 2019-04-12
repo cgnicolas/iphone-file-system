@@ -34,7 +34,7 @@ ipcMain.on('files', (event, data) => {
   } else {
     currentDir.push(data);
     isRoot = false;
-
+    console.log("Looking for files at: " + '/' + currentDir.join('/'));
     fetchFilesAt('/' + currentDir.join('/'), event);
   }
 

@@ -8,6 +8,7 @@ let currentFiles = [];
 let directory = false;
 let isRoot = true;
 let parent = "";
+let pages = [];
 const app = new PIXI.Application({
     view: canvas,
     width: window.innerWidth,
@@ -75,6 +76,7 @@ ipc.on('fileReply', (event ,data) => {
 
     let x = 26.5;
     let y = 60;
+    let page = [];
     for (const file in data.files) {
         let size = 65;
         if((file != 0) && (file % 6 === 0)){
@@ -82,7 +84,6 @@ ipc.on('fileReply', (event ,data) => {
             x = 26.5;
             y += 110;
         }
-
         let container = new PIXI.Container();
         container.x = x;
         container.y = y;
@@ -102,10 +103,19 @@ ipc.on('fileReply', (event ,data) => {
         currentFiles.push(temp);
         container.addChild(sprite);
         container.addChild(text)
-        app.stage.addChild(container);
+        if((parseInt(file) + 1) % 24 == 0){
+            console.log("Page change");
+            pages.push(page);
+            page = [];
+        }
+        page.push(container);
+        // app.stage.addChild(container);
         x = x + 170;
     }
-
+    pages.push(page);
+    for (const item in pages[0]) {
+        app.stage.addChild(pages[0][item])
+    }
 
 })
 
@@ -114,4 +124,5 @@ function clearFiles(){
         app.stage.removeChild(app.stage.children[0]);
     }
     currentFiles = [];
+    pages = [];
 }
