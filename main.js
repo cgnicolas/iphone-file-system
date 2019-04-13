@@ -12,8 +12,8 @@ let started = false;
 function createWindow () {
   // Create the browser window.
   let win = new BrowserWindow({ 
-    width: 1000,
-    height: 650, 
+    width: 1280,
+    height: 800, 
     // maxHeight: 700, 
     // maxWidth: 400, 
     // minHeight:700, 
@@ -44,22 +44,39 @@ function fetchFilesAt(directory, event){
   fs.readdir(directory, (err, files) => {
     app.emit('files');
     let data = {
-      files: hideHiddenFiles(files),
+      files: hideHiddenFiles(files, directory),
       parent: '/' + currentDir.join('/')
     }
     event.sender.send('fileReply', data);
   })
 }
 
-function hideHiddenFiles(files){
+function hideHiddenFiles(files, directory){
   let filesToShow = [];
   for (const i in files) {
 
     if(files[i].charAt(0) === '.'){
       continue;
     } else {
+      if(files[i] === "System Volume Information"){
+        continue;
+      }
       filesToShow.push(files[i]);
     }
   }
-  return filesToShow;
+
+  let filesToSend = [];
+
+  for (const file in filesToShow) {
+    let filePath = (isRoot ? '' : '/') + currentDir.join('/') + '/' + filesToShow[file];
+    console.log(fs.lstatSync(filePath).isDirectory());
+    let info = {
+      path: filePath,
+      stat: fs.lstatSync(filePath),
+      name: filesToShow[file]
+    }
+    filesToSend.push(info);
+  }
+
+  return filesToSend;
 }

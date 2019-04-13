@@ -9,6 +9,10 @@ let directory = false;
 let isRoot = true;
 let parent = "";
 let pages = [];
+let wWidth = window.innerWidth;
+
+
+/* -------------- Initialization ------------------- */
 const app = new PIXI.Application({
     view: canvas,
     width: window.innerWidth,
@@ -22,37 +26,39 @@ app.renderer.autoResize = true;
 app.renderer.resize(window.innerWidth, window.innerHeight);
 
 
-
+//Background
 const img = new PIXI.Sprite.fromImage('images/wallpaper.png');
 img.width = window.innerWidth;
 img.height = window.innerHeight;
 img.x = 0;
 img.y = 0;
-app.stage.addChild(img);
+// app.stage.addChild(img);
 
-let mainContainer = new PIXI.Container();
-mainContainer.x = 0;
-mainContainer.y = 0;
-mainContainer.height = window.innerHeight;
-mainContainer.width = window.innerWidth;
-
-app.stage.addChild(mainContainer);
+//File Container
+let fileContainer = new PIXI.Container();
+fileContainer.x = 0;
+fileContainer.y = 0;
+fileContainer.height = window.innerHeight;
+fileContainer.width = window.innerWidth;
+app.stage.addChild(fileContainer);
 
 ipc.send('files', 'send files plz');
 
 //Holds the information and methods for Files
 class File {
-
-    
-    constructor(sprite, filename){
+    constructor(sprite, filename, stat, path){
         this.filename = filename;
-        this.filepath = null;
+        this.filepath = path;
         this.sprite = sprite;
-
+        this.stat = stat;
         this.sprite.interactive = true;
         this.clicked = this.clicked.bind(this);
         this.sprite.on('click', (e) => {
-            this.clicked();
+            if(stat.mode == 16822){
+                this.clicked();
+                parent = this.filepath;
+                console.log(parent);
+            }
         })
     }
 
@@ -62,14 +68,47 @@ class File {
     }
 }
 
+
+
 /*-------------------- IPC Event Handlers ------------------ */
 ipc.on('fileReply', (event ,data) => {
     clearFiles();
+    handleFileReply(data);
+})
+
+function clearFiles(){
+    while(fileContainer.children[0]){
+        fileContainer.removeChild(fileContainer.children[0]);
+    }
+    currentFiles = [];
+}
+
+function displayPage(page){
+    clearFiles();
+    for (const item in pages[page]) {
+        fileContainer.addChild(pages[page][item]);
+    }
+}
+
+function handleFileReply(data){
     pages = []
     if(!isRoot){
         //TODO: Render back button
-        parent = data.parent;
-        console.log(parent);
+        let container = new PIXI.Container();
+        container.x = 0;
+        container.y = 0;
+        container.width =wWidth;
+        container.height = 40;
+        console.log("Here");
+    
+       let cBackground = new PIXI.Sprite.fromImage('imgaes/fileSprite.svg');
+       cBackground.width = wWidth
+       cBackground.height = 40;
+        console.log("here 2");
+    
+        container.addChild(cBackground);
+    
+        fileContainer.addChild(container);
     }
 
     let x = 26.5;
@@ -77,7 +116,7 @@ ipc.on('fileReply', (event ,data) => {
     let page = [];
     for (const file in data.files) {
         let size = 65;
-        if((file != 0) && (file % 6 === 0)){
+        if((file != 0) && (file % 7 === 0)){
             console.log("It equals zero");
             x = 26.5;
             y += 110;
@@ -88,7 +127,7 @@ ipc.on('fileReply', (event ,data) => {
         container.width = size;
         container.height = size + 5;
 
-        let text = new PIXI.Text(data.files[file], {fontFamily : 'Helvetica Neue', fill : 0xffffff, fontSize:12, align : 'center'})
+        let text = new PIXI.Text(data.files[file].name, {fontFamily : 'Helvetica Neue', fill : 0xffffff, fontSize:12, align : 'center'})
         text.anchor.set(.1, -4.5);
         text.resolution =5;
         text.scale.set(1);
@@ -97,7 +136,7 @@ ipc.on('fileReply', (event ,data) => {
         sprite.width = size;
         sprite.height = size;
 
-        let temp = new File(sprite, data.files[file]);
+        let temp = new File(sprite, data.files[file].name, data.files[file].stat, data.files[file].path);
         currentFiles.push(temp);
         container.addChild(sprite);
         container.addChild(text)
@@ -112,19 +151,9 @@ ipc.on('fileReply', (event ,data) => {
     }
     pages.push(page);
     displayPage(0);
-
-})
-
-function clearFiles(){
-    while(mainContainer.children[0]){
-        mainContainer.removeChild(mainContainer.children[0]);
-    }
-    currentFiles = [];
 }
 
-function displayPage(page){
-    clearFiles();
-    for (const item in pages[page]) {
-        mainContainer.addChild(pages[page][item]);
-    }
+function displayBackButton(){
+    console.log("Back Button being displayed");
+    
 }
