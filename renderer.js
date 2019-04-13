@@ -117,11 +117,12 @@ function displayPage(page){
 
 function handleFileReply(data){
     pages = []
+    console.log(data);
     if(!data.isRoot){
         //TODO: Render back button
         app.stage.addChild(navBarContainer);
     } else {
-        
+        app.stage.removeChild(navBarContainer);
     }
 
     let x = 26.5;
@@ -137,13 +138,13 @@ function handleFileReply(data){
         let container = new PIXI.Container();
         container.x = x;
         container.y = y;
-        container.width = size;
-        container.height = size + 5;
 
-        let text = new PIXI.Text(data.files[file].name, {fontFamily : 'Helvetica Neue', fill : 0xffffff, fontSize:12, align : 'center'})
-        text.anchor.set(.1, -4.5);
+        let text = new PIXI.Text(data.files[file].name, {fontFamily : 'Helvetica Neue', fill : 0xffffff, fontSize:12, align : 'center', wordWrap:true})
+        // text.anchor.set(.1, (size - text.height) / 10);
+        console.log("Text height: " + ((size - text.height) / 10));
         text.resolution =5;
         text.scale.set(1);
+        text.y = size;
 
         let sprite = new PIXI.Sprite.fromImage('images/fileSprite.svg');
         sprite.width = size;

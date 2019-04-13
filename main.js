@@ -30,28 +30,30 @@ ipcMain.on('files', (event, data) => {
   if(started == false){
     fetchFilesAt("/", event);
     started = true;
-    console.log(currentDir);
   } else {
     currentDir.push(data);
-    console.log("Data: " + data);
+    console.log("CurrentDir on Files: /" + currentDir.slice(1).join('/'));
     isRoot = false;
-    console.log("Looking for files at: /" + currentDir.slice(1).join('/'));
     fetchFilesAt('/' + currentDir.slice(1).join('/'), event);
   }
 
 })
 ipcMain.on('back', (event, data) => {
-  currentDir.pop();
+  // console.log("CurrentDir Back: /" + currentDir.slice(1).join('/'));
+  if(!isRoot){
+    currentDir.pop();
+  }
   if(currentDir[currentDir.length - 1] === "/"){
     isRoot = true;
   }
-  fetchFilesAt(currentDir[currentDir.length - 1], event);
+  console.log("Current Dir: /" + currentDir.slice(1).join('/'));
+  fetchFilesAt((isRoot ? '/' : ('/' + currentDir.slice(1).join('/'))), event);
 })
 
 
 
 function fetchFilesAt(directory, event){
-  console.log("Searching:" + directory);
+  // console.log("FetchFilesAt:" + directory);
   fs.readdir(directory, (err, files) => {
     // app.emit('files');
     let data = {
