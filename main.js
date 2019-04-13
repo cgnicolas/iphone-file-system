@@ -20,7 +20,6 @@ function createWindow () {
     // minWidth: 400
     nodeIntegration: true
   })
-  // and load the index.html of the app.
   // win.setMenu(null);
   win.loadFile('index.html')
 }
@@ -38,8 +37,9 @@ ipcMain.on('files', (event, data) => {
   }
 
 })
+
+//Back Button was pressed
 ipcMain.on('back', (event, data) => {
-  // console.log("CurrentDir Back: /" + currentDir.slice(1).join('/'));
   if(!isRoot){
     currentDir.pop();
   }
@@ -47,15 +47,14 @@ ipcMain.on('back', (event, data) => {
     isRoot = true;
   }
   console.log("Current Dir: /" + currentDir.slice(1).join('/'));
+  //Fetch files at the previous directory
   fetchFilesAt((isRoot ? '/' : ('/' + currentDir.slice(1).join('/'))), event);
 })
 
 
 
 function fetchFilesAt(directory, event){
-  // console.log("FetchFilesAt:" + directory);
   fs.readdir(directory, (err, files) => {
-    // app.emit('files');
     let data = {
       files: hideHiddenFiles(files, directory),
       isRoot: isRoot
@@ -63,7 +62,7 @@ function fetchFilesAt(directory, event){
     event.sender.send('fileReply', data);
   })
 }
-
+//Hides all hidden Files
 function hideHiddenFiles(files, directory){
   let filesToShow = [];
   for (const i in files) {
