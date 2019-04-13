@@ -64,8 +64,6 @@ class File {
 
 /*-------------------- IPC Event Handlers ------------------ */
 ipc.on('fileReply', (event ,data) => {
-    //console.log(data);
-    //TODO: Make file sprites appear
     clearFiles();
     pages = []
     if(!isRoot){
@@ -110,13 +108,9 @@ ipc.on('fileReply', (event ,data) => {
             page = [];
         }
         page.push(container);
-        // app.stage.addChild(container);
         x = x + 170;
     }
     pages.push(page);
-    // for (const item in pages[0]) {
-    //     app.stage.addChild(pages[0][item])
-    // }
     displayPage(0);
 
 })
@@ -131,7 +125,6 @@ function clearFiles(){
 function displayPage(page){
     clearFiles();
     for (const item in pages[page]) {
-        // mainContainer.addChild(pages[page][item])
         mainContainer.addChild(pages[page][item]);
     }
 }
