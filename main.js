@@ -66,13 +66,15 @@ function hideHiddenFiles(files, directory){
   }
 
   let filesToSend = [];
+  console.log("Searching in: " + (isRoot ? '' : '/') + currentDir.join('/') + '/');
 
   for (const file in filesToShow) {
     let filePath = (isRoot ? '' : '/') + currentDir.join('/') + '/' + filesToShow[file];
-    console.log(fs.lstatSync(filePath).isDirectory());
+    let stat = fs.lstatSync(filePath);
     let info = {
       path: filePath,
-      stat: fs.lstatSync(filePath),
+      stat: stat,
+      isDirectory: stat.isDirectory(),
       name: filesToShow[file]
     }
     filesToSend.push(info);

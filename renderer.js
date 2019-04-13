@@ -32,7 +32,7 @@ img.width = window.innerWidth;
 img.height = window.innerHeight;
 img.x = 0;
 img.y = 0;
-// app.stage.addChild(img);
+app.stage.addChild(img);
 
 //File Container
 let fileContainer = new PIXI.Container();
@@ -46,15 +46,17 @@ ipc.send('files', 'send files plz');
 
 //Holds the information and methods for Files
 class File {
-    constructor(sprite, filename, stat, path){
+    constructor(sprite, filename, stat, path, isDirectory){
         this.filename = filename;
         this.filepath = path;
         this.sprite = sprite;
         this.stat = stat;
+        this.isDirectory = isDirectory;
         this.sprite.interactive = true;
         this.clicked = this.clicked.bind(this);
         this.sprite.on('click', (e) => {
-            if(stat.mode == 16822){
+            console.log(stat.mode);
+            if(this.isDirectory){
                 this.clicked();
                 parent = this.filepath;
                 console.log(parent);
@@ -99,16 +101,21 @@ function handleFileReply(data){
         container.y = 0;
         container.width =wWidth;
         container.height = 40;
+        container.interactive = true;
+        container.on('click', () => {
+            console.log("CLICKED");
+        })
         console.log("Here");
     
-       let cBackground = new PIXI.Sprite.fromImage('imgaes/fileSprite.svg');
-       cBackground.width = wWidth
-       cBackground.height = 40;
-        console.log("here 2");
+        let cBackground = new PIXI.Sprite.fromImage('images/cBackground.svg');
+        cBackground.width = wWidth
+        cBackground.height = 40;
+        console.log(container, cBackground);
     
         container.addChild(cBackground);
-    
-        fileContainer.addChild(container);
+        
+        app.stage.addChild(container);
+        console.log(fileContainer.children);
     }
 
     let x = 26.5;
@@ -136,7 +143,7 @@ function handleFileReply(data){
         sprite.width = size;
         sprite.height = size;
 
-        let temp = new File(sprite, data.files[file].name, data.files[file].stat, data.files[file].path);
+        let temp = new File(sprite, data.files[file].name, data.files[file].stat, data.files[file].path, data.files[file].isDirectory);
         currentFiles.push(temp);
         container.addChild(sprite);
         container.addChild(text)
