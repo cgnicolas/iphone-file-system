@@ -7,7 +7,6 @@ let currentDir = ""
 let currentFiles = [];
 let directory = false;
 let isRoot = true;
-let parent = "";
 let pages = [];
 let wWidth = window.innerWidth;
 
@@ -42,6 +41,30 @@ fileContainer.height = window.innerHeight;
 fileContainer.width = window.innerWidth;
 app.stage.addChild(fileContainer);
 
+
+//Create NavBar
+let navBarContainer = new PIXI.Container();
+navBarContainer.x = 0;
+navBarContainer.y = 0;
+navBarContainer.width =wWidth;
+navBarContainer.height = 40;
+console.log("Here");
+
+let cBackground = new PIXI.Sprite.fromImage('images/cBackground.svg');
+cBackground.width = wWidth
+cBackground.height = 40;
+console.log(navBarContainer, cBackground);
+
+let cBack = new PIXI.Text('Back', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
+cBack.anchor.set(-1, -1);
+cBack.interactive = true;
+cBack.on('click', () => {
+    ipc.send('back');
+})
+
+navBarContainer.addChild(cBackground);
+navBarContainer.addChild(cBack);
+
 ipc.send('files', 'send files plz');
 
 //Holds the information and methods for Files
@@ -55,11 +78,8 @@ class File {
         this.sprite.interactive = true;
         this.clicked = this.clicked.bind(this);
         this.sprite.on('click', (e) => {
-            console.log(stat.mode);
             if(this.isDirectory){
                 this.clicked();
-                parent = this.filepath;
-                console.log(parent);
             }
         })
     }
@@ -92,30 +112,16 @@ function displayPage(page){
     }
 }
 
+
+
+
 function handleFileReply(data){
     pages = []
-    if(!isRoot){
+    if(!data.isRoot){
         //TODO: Render back button
-        let container = new PIXI.Container();
-        container.x = 0;
-        container.y = 0;
-        container.width =wWidth;
-        container.height = 40;
-        container.interactive = true;
-        container.on('click', () => {
-            console.log("CLICKED");
-        })
-        console.log("Here");
-    
-        let cBackground = new PIXI.Sprite.fromImage('images/cBackground.svg');
-        cBackground.width = wWidth
-        cBackground.height = 40;
-        console.log(container, cBackground);
-    
-        container.addChild(cBackground);
+        app.stage.addChild(navBarContainer);
+    } else {
         
-        app.stage.addChild(container);
-        console.log(fileContainer.children);
     }
 
     let x = 26.5;

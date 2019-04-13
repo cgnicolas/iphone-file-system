@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const fs = require('fs');
-let currentDir = [];
+let currentDir = ["/"];
 let isRoot = true;
 //TODO:
 //https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
@@ -33,19 +33,30 @@ ipcMain.on('files', (event, data) => {
     console.log(currentDir);
   } else {
     currentDir.push(data);
+    console.log("Data: " + data);
     isRoot = false;
-    console.log("Looking for files at: " + '/' + currentDir.join('/'));
-    fetchFilesAt('/' + currentDir.join('/'), event);
+    console.log("Looking for files at: /" + currentDir.slice(1).join('/'));
+    fetchFilesAt('/' + currentDir.slice(1).join('/'), event);
   }
 
 })
+ipcMain.on('back', (event, data) => {
+  currentDir.pop();
+  if(currentDir[currentDir.length - 1] === "/"){
+    isRoot = true;
+  }
+  fetchFilesAt(currentDir[currentDir.length - 1], event);
+})
+
+
 
 function fetchFilesAt(directory, event){
+  console.log("Searching:" + directory);
   fs.readdir(directory, (err, files) => {
-    app.emit('files');
+    // app.emit('files');
     let data = {
       files: hideHiddenFiles(files, directory),
-      parent: '/' + currentDir.join('/')
+      isRoot: isRoot
     }
     event.sender.send('fileReply', data);
   })
@@ -66,10 +77,9 @@ function hideHiddenFiles(files, directory){
   }
 
   let filesToSend = [];
-  console.log("Searching in: " + (isRoot ? '' : '/') + currentDir.join('/') + '/');
 
   for (const file in filesToShow) {
-    let filePath = (isRoot ? '' : '/') + currentDir.join('/') + '/' + filesToShow[file];
+    let filePath = (isRoot ? '/' : '/' + currentDir.slice(1).join('/') + '/' + filesToShow[file]);
     let stat = fs.lstatSync(filePath);
     let info = {
       path: filePath,
