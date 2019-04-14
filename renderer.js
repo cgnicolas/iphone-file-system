@@ -65,6 +65,7 @@ cNext.x = wWidth - (cNext.width * 3);
 cNext.interactive = true;
 cNext.on('click', () => {
     currentPage++;
+    checkPage();
     displayPage(currentPage);
     console.log("Go Next");
 })
@@ -75,6 +76,7 @@ cPrev.x = (wWidth / 2) - (cNext.width * 3);
 cPrev.interactive = true;
 cPrev.on('click', () => {
     currentPage--;
+    checkPage();
     displayPage(currentPage)
     console.log("Go Prev");
 })
@@ -186,21 +188,26 @@ function handleFileReply(data){
         x = x + 170;
     }
     pages.push(page);
-    if(pages.length > 1 && currentPage != pages.length - 1){
-        console.log(navBarContainer.width, cNext.x);
-        navBarContainer.addChild(cNext);
-    } 
-    else {
-        navBarContainer.removeChild(cPrev);
-        navBarContainer.removeChild(cNext);
-    }
-    if(currentPage >= 1){
-        navBarContainer.addChild(cPrev);
-    }
+    checkPage();
     //TODO: Add Pagination
     displayPage(0);
 }
 
 function displayBackButton(){
     console.log("Back Button being displayed");
+}
+
+function checkPage(){
+    if(pages.length > 1 && currentPage != pages.length - 1){
+        console.log(navBarContainer.width, cNext.x);
+        navBarContainer.addChild(cNext);
+    } else {
+        navBarContainer.removeChild(cNext);
+    }
+    if(currentPage >= 1){
+        navBarContainer.addChild(cPrev);
+    }
+    else{
+        navBarContainer.removeChild(cPrev);
+    }
 }
