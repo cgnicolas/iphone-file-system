@@ -203,5 +203,4 @@ function handleFileReply(data){
 
 function displayBackButton(){
     console.log("Back Button being displayed");
-    
 }

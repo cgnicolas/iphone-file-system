@@ -15,10 +15,6 @@ function createWindow () {
   let win = new BrowserWindow({ 
     width: 1280,
     height: 800, 
-    // maxHeight: 700, 
-    // maxWidth: 400, 
-    // minHeight:700, 
-    // minWidth: 400
     nodeIntegration: true
   })
   // win.setMenu(null);
