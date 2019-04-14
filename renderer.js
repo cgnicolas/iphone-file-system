@@ -1,14 +1,11 @@
-var {remote} = require('electron').remote;
 var ipc = require('electron').ipcRenderer;
 const fs = require('fs');
 const PIXI = require('pixi.js');
 let canvas = document.getElementById('myCanvas');
-let currentDir = ""
 let currentFiles = [];
-let directory = false;
-let isRoot = true;
 let pages = [];
 let wWidth = window.innerWidth;
+let currentPage = 0;
 
 
 /* -------------- Initialization ------------------- */
@@ -46,7 +43,7 @@ app.stage.addChild(fileContainer);
 let navBarContainer = new PIXI.Container();
 navBarContainer.x = 0;
 navBarContainer.y = 0;
-navBarContainer.width =wWidth;
+navBarContainer.width = window.innerWidth;
 navBarContainer.height = 40;
 console.log("Here");
 
@@ -55,15 +52,39 @@ cBackground.width = wWidth
 cBackground.height = 40;
 console.log(navBarContainer, cBackground);
 
-let cBack = new PIXI.Text('Back', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
+let cBack = new PIXI.Text('../', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
 cBack.anchor.set(-1, -1);
 cBack.interactive = true;
 cBack.on('click', () => {
     ipc.send('back');
 })
 
+let cNext = new PIXI.Text('Next', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
+cNext.anchor.set(-1, -1);
+cNext.x = wWidth - (cNext.width * 3);
+cNext.interactive = true;
+cNext.on('click', () => {
+    currentPage++;
+    displayPage(currentPage);
+    console.log("Go Next");
+})
+
+let cPrev = new PIXI.Text('Prev', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
+cPrev.anchor.set(-1, -1);
+cPrev.x = (wWidth / 2) - (cNext.width * 3);
+cPrev.interactive = true;
+cPrev.on('click', () => {
+    currentPage--;
+    displayPage(currentPage)
+    console.log("Go Prev");
+})
+
+
+
 navBarContainer.addChild(cBackground);
 navBarContainer.addChild(cBack);
+navBarContainer.addChild(cPrev);
+app.stage.addChild(navBarContainer);
 
 ipc.send('files', 'send files plz');
 
@@ -107,6 +128,7 @@ function clearFiles(){
 
 function displayPage(page){
     clearFiles();
+    //TODO: X's and Y's need to fixed when displaying the page, possible fix in handleFileReply
     for (const item in pages[page]) {
         fileContainer.addChild(pages[page][item]);
     }
@@ -120,9 +142,9 @@ function handleFileReply(data){
     console.log(data);
     if(!data.isRoot){
         //TODO: Render back button
-        app.stage.addChild(navBarContainer);
+        navBarContainer.addChild(cBack);
     } else {
-        app.stage.removeChild(navBarContainer);
+        navBarContainer.removeChild(cBack);
     }
 
     let x = 26.5;
@@ -140,8 +162,6 @@ function handleFileReply(data){
         container.y = y;
 
         let text = new PIXI.Text(data.files[file].name, {fontFamily : 'Helvetica Neue', fill : 0xffffff, fontSize:12, align : 'center', wordWrap:true})
-        // text.anchor.set(.1, (size - text.height) / 10);
-        console.log("Text height: " + ((size - text.height) / 10));
         text.resolution =5;
         text.scale.set(1);
         text.y = size;
@@ -155,8 +175,10 @@ function handleFileReply(data){
         container.addChild(sprite);
         container.addChild(text)
         //Filling pages
-        if((parseInt(file) + 1) % 24 == 0){
+        if((parseInt(file) + 1) % 36 == 0){
             console.log("Page change");
+            x = 26.5;
+            y = 60;
             pages.push(page);
             page = [];
         }
@@ -164,6 +186,17 @@ function handleFileReply(data){
         x = x + 170;
     }
     pages.push(page);
+    if(pages.length > 1 && currentPage != pages.length - 1){
+        console.log(navBarContainer.width, cNext.x);
+        navBarContainer.addChild(cNext);
+    } 
+    else {
+        navBarContainer.removeChild(cPrev);
+        navBarContainer.removeChild(cNext);
+    }
+    if(currentPage >= 1){
+        navBarContainer.addChild(cPrev);
+    }
     //TODO: Add Pagination
     displayPage(0);
 }

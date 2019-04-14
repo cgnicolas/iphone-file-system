@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const fs = require('fs');
 let currentDir = ["/"];
 let isRoot = true;
+let pages = [];
 //TODO:
 //https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
 //Use the link above to try and send messages between script.js and main.js
@@ -75,6 +76,7 @@ function hideHiddenFiles(files, directory){
       }
       filesToShow.push(files[i]);
     }
+    // filesToShow.push(files[i]);
   }
 
   let filesToSend = [];
