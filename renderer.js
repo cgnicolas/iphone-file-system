@@ -154,10 +154,19 @@ function handleFileReply(data){
     let page = [];
     for (const file in data.files) {
         let size = 65;
-        if((file != 0) && (file % 7 === 0)){
+        //Making rows
+        if((parseInt(file) != 0) && (parseInt(file) % 7 === 0)){
             console.log("It equals zero");
             x = 26.5;
             y += 110;
+        }
+        //Resetting pages
+        if((parseInt(file) !== 0) && (parseInt(file) % 35 === 0)){
+            console.log("Page change");
+            x = 26.5;
+            y = 60;
+            // pages.push(page);
+            // page = [];
         }
         let container = new PIXI.Container();
         container.x = x;
@@ -177,10 +186,7 @@ function handleFileReply(data){
         container.addChild(sprite);
         container.addChild(text)
         //Filling pages
-        if((parseInt(file) + 1) % 36 == 0){
-            console.log("Page change");
-            x = 26.5;
-            y = 60;
+        if((parseInt(file) !== 0) && (parseInt(file) % 35 === 0)){
             pages.push(page);
             page = [];
         }
