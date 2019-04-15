@@ -1,24 +1,27 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu, MenuItem, webContents} = require('electron')
 const fs = require('fs');
 let currentDir = ["/"];
 let isRoot = true;
 let pages = [];
+let renderer;
+const ePropmt = require('electron-prompt');
 //TODO:
 //https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
 //Use the link above to try and send messages between script.js and main.js
 //I.E. Requesting files in current directory
 let started = false;
-
-
+let win; 
+//TODO: Create Update and Destroy
 function createWindow () {
   // Create the browser window.
-  let win = new BrowserWindow({ 
+  win = new BrowserWindow({ 
     width: 1280,
     height: 800, 
-    nodeIntegration: true
+    nodeIntegration: true,
   })
   // win.setMenu(null);
   win.loadFile('index.html')
+  require('./MainMenu.js')
 }
 app.on('ready', createWindow)
 
@@ -26,7 +29,10 @@ ipcMain.on('files', (event, data) => {
   if(started == false){
     fetchFilesAt("/", event);
     started = true;
-  } else {
+  } else if (data === 'currentDir'){
+    fetchFilesAt('/' + currentDir.slice(1).join('/'), event);
+  }
+  else {
     currentDir.push(data);
     console.log("CurrentDir on Files: /" + currentDir.slice(1).join('/'));
     isRoot = false;
@@ -48,6 +54,29 @@ ipcMain.on('back', (event, data) => {
   fetchFilesAt((isRoot ? '/' : ('/' + currentDir.slice(1).join('/'))), event);
 })
 
+ipcMain.on('fileMake', () => {
+  // win.webContents.send('fileMake')
+  ePropmt({
+    title: 'Create New File',
+    label: 'Make A New File in this Directory',
+    value: '',
+    inputAttrs: {
+        type: 'text'
+    }
+})
+.then((r) => {
+    if(r === null) {
+        console.log('user cancelled');
+    } else {
+      let filePath = (isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+      console.log(filePath);
+      fs.open(filePath, 'w', (err, file) =>{
+        win.webContents.send('fileMake');
+      })
+    }
+})
+.catch(console.error);
+})
 
 
 function fetchFilesAt(directory, event){

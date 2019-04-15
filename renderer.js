@@ -1,6 +1,7 @@
 var ipc = require('electron').ipcRenderer;
 const fs = require('fs');
 const PIXI = require('pixi.js');
+const ePropmt = require('electron-prompt');
 let canvas = document.getElementById('myCanvas');
 let currentFiles = [];
 let pages = [];
@@ -100,11 +101,22 @@ class File {
         this.isDirectory = isDirectory;
         this.sprite.interactive = true;
         this.clicked = this.clicked.bind(this);
+        this.onButtonDown = this.onButtonDown.bind(this);
+        this.onButtonUp = this.onButtonUp.bind(this);
         this.sprite.on('click', (e) => {
             if(this.isDirectory){
                 this.clicked();
             }
         })
+        this.sprite.on('touchstart', this.onButtonDown);
+        this.sprite.on('touchend', this.onButtonUp);
+    }
+
+    onButtonDown(){
+
+    }
+    onButtonUp(){
+
     }
 
     clicked(){
@@ -119,6 +131,27 @@ class File {
 ipc.on('fileReply', (event ,data) => {
     clearFiles();
     handleFileReply(data);
+})
+
+ipc.on('fileMake', (event, data) => {
+    ipc.send('files', 'currentDir');
+    // ePropmt({
+    //     title: 'Create New File',
+    //     label: 'Make A New File in this Directory',
+    //     value: '',
+    //     inputAttrs: {
+    //         type: 'text'
+    //     }
+    // })
+    // .then((r) => {
+    //     if(r === null) {
+    //         console.log('user cancelled');
+    //     } else {
+
+    //         ipc.send('files', 'reload files plz')
+    //     }
+    // })
+    // .catch(console.error);
 })
 
 function clearFiles(){
@@ -165,8 +198,6 @@ function handleFileReply(data){
             console.log("Page change");
             x = 26.5;
             y = 60;
-            // pages.push(page);
-            // page = [];
         }
         let container = new PIXI.Container();
         container.x = x;
