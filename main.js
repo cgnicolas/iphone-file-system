@@ -68,7 +68,7 @@ ipcMain.on('fileMake', () => {
     if(r === null) {
         console.log('user cancelled');
     } else {
-      let filePath = (isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+      let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
       console.log(filePath);
       fs.open(filePath, 'w', (err, file) =>{
         win.webContents.send('fileCRUD');
@@ -91,7 +91,7 @@ ipcMain.on('fileDelete', () => {
       if(r === null) {
           console.log('user cancelled');
       } else {
-        let filePath = (isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+        let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
         console.log(filePath);
         fs.unlink(filePath, (err, file) => {
           win.webContents.send('fileCRUD');
@@ -101,6 +101,31 @@ ipcMain.on('fileDelete', () => {
   .catch(console.error);
 })
 
+ipcMain.on('directoryMake', () => {
+  ePrompt({
+    title: 'Create a Directory',
+    label: 'Create a Directory in this Directory',
+    value: '',
+    inputAttrs: {
+        type: 'text'
+    }
+  })
+  .then((r) => {
+      if(r === null) {
+          console.log('user cancelled');
+      } else {
+        let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+        if(!fs.existsSync(filePath)){
+          console.log(filePath);
+          fs.mkdir(filePath, {recursive: false, mode: 0644}, (err, file) => {
+            console.log("Made: " + filePath);
+            win.webContents.send('fileCRUD');
+          })
+        }
+      }
+  })
+  .catch(console.error);
+})
 
 function fetchFilesAt(directory, event){
   fs.readdir(directory, (err, files) => {

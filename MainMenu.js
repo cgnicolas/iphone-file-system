@@ -23,6 +23,12 @@ const template = [
             click(item, focusedWindow){
                 ipcMain.emit('fileMove');
             }
+        },
+        {
+          label: 'Make Directory',
+          click(item, focusedWindow){
+            ipcMain.emit('directoryMake');
+          }
         }
     ]
   },

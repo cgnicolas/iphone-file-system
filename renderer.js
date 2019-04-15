@@ -120,8 +120,8 @@ class File {
     }
 
     clicked(){
+        currentPage = 0;
         ipc.send('files', this.filename)
-        isRoot = false;
     }
 }
 
@@ -134,6 +134,7 @@ ipc.on('fileReply', (event ,data) => {
 })
 
 ipc.on('fileCRUD', (event, data) => {
+
     ipc.send('files', 'currentDir');
 })
 
