@@ -134,7 +134,7 @@ ipc.on('fileReply', (event ,data) => {
 })
 
 ipc.on('fileCRUD', (event, data) => {
-
+    currentPage = 0;
     ipc.send('files', 'currentDir');
 })
 

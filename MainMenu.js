@@ -29,7 +29,14 @@ const template = [
           click(item, focusedWindow){
             ipcMain.emit('directoryMake');
           }
+        },
+        {
+          label: 'Delete Directory',
+          click(item, focusedWindow){
+            ipcMain.emit('directoryDelete');
+          }
         }
+
     ]
   },
   {

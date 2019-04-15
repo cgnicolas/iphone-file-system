@@ -127,6 +127,29 @@ ipcMain.on('directoryMake', () => {
   .catch(console.error);
 })
 
+ipcMain.on('directoryDelete', () => {
+  ePrompt({
+    title: 'Delete a Directory',
+    label: 'Delete a Directory in this Directory',
+    value: '',
+    inputAttrs: {
+        type: 'text'
+    }
+  })
+  .then((r) => {
+      if(r === null) {
+          console.log('user cancelled');
+      } else {
+        let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+        fs.rmdir(filePath, () => {
+          win.webContents.send('fileCRUD');
+          console.log("Deleted " + filePath)
+        })
+      }
+  })
+  .catch(console.error);
+})
+
 function fetchFilesAt(directory, event){
   fs.readdir(directory, (err, files) => {
     let data = {
