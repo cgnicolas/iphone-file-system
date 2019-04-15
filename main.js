@@ -93,7 +93,7 @@ ipcMain.on('fileDelete', () => {
       } else {
         let filePath = (isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
         console.log(filePath);
-        fs.unlink(filePath, (err, file) =>{
+        fs.unlink(filePath, (err, file) => {
           win.webContents.send('fileCRUD');
         })
       }
