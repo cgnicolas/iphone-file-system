@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, Menu, MenuItem, webContents} = require('electron')
 const fs = require('fs');
+const rimraf = require('rimraf');
 let currentDir = ["/"];
 let isRoot = true;
 let pages = [];
@@ -126,7 +127,7 @@ ipcMain.on('directoryMake', () => {
   })
   .catch(console.error);
 })
-
+//TODO: Ask Billy if must be recursive?
 ipcMain.on('directoryDelete', () => {
   ePrompt({
     title: 'Delete a Directory',
@@ -141,9 +142,16 @@ ipcMain.on('directoryDelete', () => {
           console.log('user cancelled');
       } else {
         let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
-        fs.rmdir(filePath, () => {
+        // fs.rmdir(filePath, (error) => {
+        //   if(error){
+        //     console.log(error);
+        //   } else {
+        //     win.webContents.send('fileCRUD');
+        //     console.log("Deleted " + filePath)
+        //   }
+        // })
+        rimraf(filePath, () => {
           win.webContents.send('fileCRUD');
-          console.log("Deleted " + filePath)
         })
       }
   })
