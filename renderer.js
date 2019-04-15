@@ -133,26 +133,10 @@ ipc.on('fileReply', (event ,data) => {
     handleFileReply(data);
 })
 
-ipc.on('fileMake', (event, data) => {
+ipc.on('fileCRUD', (event, data) => {
     ipc.send('files', 'currentDir');
-    // ePropmt({
-    //     title: 'Create New File',
-    //     label: 'Make A New File in this Directory',
-    //     value: '',
-    //     inputAttrs: {
-    //         type: 'text'
-    //     }
-    // })
-    // .then((r) => {
-    //     if(r === null) {
-    //         console.log('user cancelled');
-    //     } else {
-
-    //         ipc.send('files', 'reload files plz')
-    //     }
-    // })
-    // .catch(console.error);
 })
+
 
 function clearFiles(){
     while(fileContainer.children[0]){

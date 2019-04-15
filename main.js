@@ -4,7 +4,7 @@ let currentDir = ["/"];
 let isRoot = true;
 let pages = [];
 let renderer;
-const ePropmt = require('electron-prompt');
+const ePrompt = require('electron-prompt');
 //TODO:
 //https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
 //Use the link above to try and send messages between script.js and main.js
@@ -56,7 +56,7 @@ ipcMain.on('back', (event, data) => {
 
 ipcMain.on('fileMake', () => {
   // win.webContents.send('fileMake')
-  ePropmt({
+  ePrompt({
     title: 'Create New File',
     label: 'Make A New File in this Directory',
     value: '',
@@ -71,11 +71,34 @@ ipcMain.on('fileMake', () => {
       let filePath = (isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
       console.log(filePath);
       fs.open(filePath, 'w', (err, file) =>{
-        win.webContents.send('fileMake');
+        win.webContents.send('fileCRUD');
       })
     }
 })
 .catch(console.error);
+})
+
+ipcMain.on('fileDelete', () => {
+  ePrompt({
+    title: 'Delete A File',
+    label: 'Delete A File from this Directory',
+    value: '',
+    inputAttrs: {
+        type: 'text'
+    }
+  })
+  .then((r) => {
+      if(r === null) {
+          console.log('user cancelled');
+      } else {
+        let filePath = (isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+        console.log(filePath);
+        fs.unlink(filePath, (err, file) =>{
+          win.webContents.send('fileCRUD');
+        })
+      }
+  })
+  .catch(console.error);
 })
 
 
