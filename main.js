@@ -56,7 +56,6 @@ ipcMain.on('back', (event, data) => {
 })
 
 ipcMain.on('fileMake', () => {
-  // win.webContents.send('fileMake')
   ePrompt({
     title: 'Create New File',
     label: 'Make A New File in this Directory',
@@ -127,7 +126,8 @@ ipcMain.on('directoryMake', () => {
   })
   .catch(console.error);
 })
-//TODO: Ask Billy if must be recursive?
+
+
 ipcMain.on('directoryDelete', () => {
   ePrompt({
     title: 'Delete a Directory',
@@ -158,6 +158,53 @@ ipcMain.on('directoryDelete', () => {
   .catch(console.error);
 })
 
+ipcMain.on('fileCopy', () => {
+  ePrompt({
+    title: 'Copy a File',
+    label: 'Copy a File in this Directory',
+    value: '',
+    inputAttrs: {
+        type: 'text'
+    }
+  })
+  .then((r) => {
+      if(r === null) {
+          console.log('user cancelled');
+      } else {
+        let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+        
+      }
+  })
+  .catch(console.error);
+})
+
+ipcMain.on('backgroundChange', () => {
+  ePrompt({
+    title: 'Change Background Image',
+    label: 'Change the Background Image',
+    value: '',
+    inputAttrs: {
+        type: 'text'
+    }
+  })
+  .then((r) => {
+      if(r === null) {
+          console.log('user cancelled');
+      } else {
+        let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+        if(fs.exists){
+          if(r.slice(r.length - 4) === '.jpg' || r.slice(r.length - 4) === '.png'){
+            win.webContents.send('backgroundChange', filePath);
+          }
+        } else {
+
+        }
+        
+      }
+  })
+  .catch(console.error);
+})
+
 function fetchFilesAt(directory, event){
   fs.readdir(directory, (err, files) => {
     let data = {
@@ -180,7 +227,6 @@ function hideHiddenFiles(files, directory){
       }
       filesToShow.push(files[i]);
     }
-    // filesToShow.push(files[i]);
   }
 
   let filesToSend = [];

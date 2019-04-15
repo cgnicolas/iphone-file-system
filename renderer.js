@@ -24,12 +24,12 @@ app.renderer.resize(window.innerWidth, window.innerHeight);
 
 
 //Background
-const img = new PIXI.Sprite.fromImage('images/wallpaper.png');
-img.width = window.innerWidth;
-img.height = window.innerHeight;
-img.x = 0;
-img.y = 0;
-app.stage.addChild(img);
+let bImg = new PIXI.Sprite.fromImage('images/wallpaper.png');
+bImg.width = window.innerWidth;
+bImg.height = window.innerHeight;
+bImg.x = 0;
+bImg.y = 0;
+app.stage.addChild(bImg);
 
 //File Container
 let fileContainer = new PIXI.Container();
@@ -138,6 +138,17 @@ ipc.on('fileCRUD', (event, data) => {
     ipc.send('files', 'currentDir');
 })
 
+ipc.on('backgroundChange', (event, data) => {
+    app.stage.removeChild(bImg);
+
+    bImg = new PIXI.Sprite.fromImage(data);
+    bImg.width = window.innerWidth;
+    bImg.height = window.innerHeight;
+    bImg.x = 0;
+    bImg.y = 0;
+    app.stage.addChild(bImg);
+    app.stage.swapChildren(fileContainer, bImg);
+})
 
 function clearFiles(){
     while(fileContainer.children[0]){
