@@ -48,18 +48,20 @@ navBarContainer.width = window.innerWidth;
 navBarContainer.height = 40;
 console.log("Here");
 
+//White Background for Nav Bar
 let cBackground = new PIXI.Sprite.fromImage('images/cBackground.svg');
 cBackground.width = wWidth
 cBackground.height = 40;
 console.log(navBarContainer, cBackground);
 
+//Back Button
 let cBack = new PIXI.Text('../', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
 cBack.anchor.set(-1, -1);
 cBack.interactive = true;
 cBack.on('click', () => {
     ipc.send('back');
 })
-
+//Next Page Button
 let cNext = new PIXI.Text('Next', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
 cNext.anchor.set(-1, -1);
 cNext.x = wWidth - (cNext.width * 3);
@@ -70,7 +72,7 @@ cNext.on('click', () => {
     displayPage(currentPage);
     console.log("Go Next");
 })
-
+//Previous Page Button
 let cPrev = new PIXI.Text('Prev', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
 cPrev.anchor.set(-1, -1);
 cPrev.x = (wWidth / 2) - (cNext.width * 3);
@@ -82,8 +84,7 @@ cPrev.on('click', () => {
     console.log("Go Prev");
 })
 
-
-
+//Adding children to their respective container
 navBarContainer.addChild(cBackground);
 navBarContainer.addChild(cBack);
 navBarContainer.addChild(cPrev);
@@ -101,8 +102,6 @@ class File {
         this.isDirectory = isDirectory;
         this.sprite.interactive = true;
         this.clicked = this.clicked.bind(this);
-        this.onButtonDown = this.onButtonDown.bind(this);
-        this.onButtonUp = this.onButtonUp.bind(this);
         this.sprite.on('click', (e) => {
             if(this.isDirectory){
                 this.clicked();
@@ -119,13 +118,6 @@ class File {
         this.sprite.on('touchend', this.onButtonUp);
     }
 
-    onButtonDown(){
-
-    }
-    onButtonUp(){
-
-    }
-
     clicked(){
         currentPage = 0;
         ipc.send('files', this.filename)
@@ -135,16 +127,17 @@ class File {
 
 
 /*-------------------- IPC Event Handlers ------------------ */
+//main has loaded new files
 ipc.on('fileReply', (event ,data) => {
     clearFiles();
     handleFileReply(data);
 })
-
+//Refresh page
 ipc.on('fileCRUD', (event, data) => {
     currentPage = 0;
     ipc.send('files', 'currentDir');
 })
-
+//Changing background
 ipc.on('backgroundChange', (event, data) => {
     app.stage.removeChild(bImg);
 
@@ -157,13 +150,15 @@ ipc.on('backgroundChange', (event, data) => {
     app.stage.swapChildren(fileContainer, bImg);
 })
 
+/*------------------------- Helper Functions ------------------*/
+//Clearing the page
 function clearFiles(){
     while(fileContainer.children[0]){
         fileContainer.removeChild(fileContainer.children[0]);
     }
     currentFiles = [];
 }
-
+//Display a given page on pressing 'Next' or 'Prev'
 function displayPage(page){
     clearFiles();
     //TODO: X's and Y's need to fixed when displaying the page, possible fix in handleFileReply
@@ -172,9 +167,7 @@ function displayPage(page){
     }
 }
 
-
-
-
+//Handles the new files and creates respsective sprites
 function handleFileReply(data){
     pages = []
     console.log(data);
@@ -233,10 +226,7 @@ function handleFileReply(data){
     displayPage(0);
 }
 
-function displayBackButton(){
-    console.log("Back Button being displayed");
-}
-
+//Check if page is within page bounds
 function checkPage(){
     if(pages.length > 1 && currentPage != pages.length - 1){
         console.log(navBarContainer.width, cNext.x);

@@ -6,13 +6,9 @@ let isRoot = true;
 let pages = [];
 let renderer;
 const ePrompt = require('electron-prompt');
-//TODO:
-//https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
-//Use the link above to try and send messages between script.js and main.js
-//I.E. Requesting files in current directory
 let started = false;
 let win; 
-//TODO: Create Update and Destroy
+
 function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({ 
@@ -20,7 +16,6 @@ function createWindow () {
     height: 800, 
     nodeIntegration: true,
   })
-  // win.setMenu(null);
   win.loadFile('index.html')
   require('./MainMenu.js')
 }
@@ -55,6 +50,7 @@ ipcMain.on('back', (event, data) => {
   fetchFilesAt((isRoot ? '/' : ('/' + currentDir.slice(1).join('/'))), event);
 })
 
+//User wants to make a new file
 ipcMain.on('fileMake', () => {
   ePrompt({
     title: 'Create New File',
@@ -78,6 +74,7 @@ ipcMain.on('fileMake', () => {
 .catch(console.error);
 })
 
+//User wants to delete a file
 ipcMain.on('fileDelete', () => {
   ePrompt({
     title: 'Delete A File',
@@ -101,6 +98,7 @@ ipcMain.on('fileDelete', () => {
   .catch(console.error);
 })
 
+//User wants to copy a file
 ipcMain.on('fileCopy', () => {
   ePrompt({
     title: 'Copy A File',
@@ -143,7 +141,7 @@ ipcMain.on('fileCopy', () => {
   .catch(console.error);
 })
 
-
+//User wants to move a file
 ipcMain.on('fileMove', () => {
   ePrompt({
     title: 'Move A File',
@@ -184,8 +182,7 @@ ipcMain.on('fileMove', () => {
   .catch(console.error);
 })
 
-
-
+//User wants to make a new directory
 ipcMain.on('directoryMake', () => {
   ePrompt({
     title: 'Create a Directory',
@@ -212,7 +209,7 @@ ipcMain.on('directoryMake', () => {
   .catch(console.error);
 })
 
-
+//User wants to delete a directory
 ipcMain.on('directoryDelete', () => {
   ePrompt({
     title: 'Delete a Directory',
@@ -227,14 +224,7 @@ ipcMain.on('directoryDelete', () => {
           console.log('user cancelled');
       } else {
         let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
-        // fs.rmdir(filePath, (error) => {
-        //   if(error){
-        //     console.log(error);
-        //   } else {
-        //     win.webContents.send('fileCRUD');
-        //     console.log("Deleted " + filePath)
-        //   }
-        // })
+        //Deletes directory regardless of whether or not it is empty
         rimraf(filePath, () => {
           win.webContents.send('fileCRUD');
         })
@@ -243,8 +233,8 @@ ipcMain.on('directoryDelete', () => {
   .catch(console.error);
 })
 
-
-
+//Additional Feature, allows user to change the background photo of their
+//File system, must be within current directory
 ipcMain.on('backgroundChange', () => {
   ePrompt({
     title: 'Change Background Image',
@@ -272,6 +262,7 @@ ipcMain.on('backgroundChange', () => {
   .catch(console.error);
 })
 
+//User has requested information for a file or directory
 ipcMain.on('fileInfo', (event, data) => {
   let info = new BrowserWindow({ 
     width: 400,
@@ -281,7 +272,7 @@ ipcMain.on('fileInfo', (event, data) => {
   // win.setMenu(null);
 })
 
-
+//Fetches the files at a given directory
 function fetchFilesAt(directory, event){
   fs.readdir(directory, (err, files) => {
     let data = {
