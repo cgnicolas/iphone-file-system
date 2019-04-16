@@ -272,6 +272,16 @@ ipcMain.on('backgroundChange', () => {
   .catch(console.error);
 })
 
+ipcMain.on('fileInfo', (event, data) => {
+  let info = new BrowserWindow({ 
+    width: 400,
+    height: 400, 
+    nodeIntegration: true,
+  })
+  // win.setMenu(null);
+})
+
+
 function fetchFilesAt(directory, event){
   fs.readdir(directory, (err, files) => {
     let data = {

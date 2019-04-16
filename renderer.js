@@ -108,6 +108,13 @@ class File {
                 this.clicked();
             }
         })
+        this.sprite.on('rightclick', (e) => {
+            let dataToSend = {
+                path: this.filepath,
+                stat: this.stat
+            }
+            ipc.send('fileInfo', dataToSend);
+        })
         this.sprite.on('touchstart', this.onButtonDown);
         this.sprite.on('touchend', this.onButtonUp);
     }
