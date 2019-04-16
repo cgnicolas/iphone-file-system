@@ -264,11 +264,15 @@ ipcMain.on('backgroundChange', () => {
 
 //User has requested information for a file or directory
 ipcMain.on('fileInfo', (event, data) => {
-  let info = new BrowserWindow({ 
-    width: 400,
-    height: 400, 
-    nodeIntegration: true,
-  })
+  // let info = new BrowserWindow({ 
+  //   width: 400,
+  //   height: 400, 
+  //   nodeIntegration: true,
+
+  // })
+  // info.customProps = {
+  //   data: data
+  // }
   // win.setMenu(null);
 })
 

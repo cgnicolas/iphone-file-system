@@ -108,11 +108,8 @@ class File {
             }
         })
         this.sprite.on('rightclick', (e) => {
-            let dataToSend = {
-                path: this.filepath,
-                stat: this.stat
-            }
-            ipc.send('fileInfo', dataToSend);
+            let string = "FilePath: " + this.filepath + "\n Last Modification Time: " + this.stat.mtime + "\n Creation Time:" + this.stat.birthtime;
+            alert(string)
         })
         this.sprite.on('touchstart', this.onButtonDown);
         this.sprite.on('touchend', this.onButtonUp);
