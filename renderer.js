@@ -195,19 +195,23 @@ function handleFileReply(data){
             x = 26.5;
             y = 60;
         }
+        //Container for file sprite
         let container = new PIXI.Container();
         container.x = x;
         container.y = y;
 
+        //File title text
         let text = new PIXI.Text(data.files[file].name, {fontFamily : 'Helvetica Neue', fill : 0xffffff, fontSize:12, align : 'center', wordWrap:true})
         text.resolution =5;
         text.scale.set(1);
         text.y = size;
-
+        
+        //File sprite
         let sprite = new PIXI.Sprite.fromImage('images/fileSprite.svg');
         sprite.width = size;
         sprite.height = size;
-
+        
+        //Creating a file object and adding it to currentFiles
         let temp = new File(sprite, data.files[file].name, data.files[file].stat, data.files[file].path, data.files[file].isDirectory);
         currentFiles.push(temp);
         container.addChild(sprite);
