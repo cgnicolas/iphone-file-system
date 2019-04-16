@@ -101,6 +101,92 @@ ipcMain.on('fileDelete', () => {
   .catch(console.error);
 })
 
+ipcMain.on('fileCopy', () => {
+  ePrompt({
+    title: 'Copy A File',
+    label: 'Copy A File from this Directory to Another',
+    value: '',
+    inputAttrs: {
+        type: 'text'
+    }
+  })
+  .then((r) => {
+      if(r === null) {
+        return;
+      } else {
+        let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+        ePrompt({
+          title: 'Enter Directory',
+          label: 'Enter a Directory to copy ' + r + ' to',
+          value: '',
+          inputAttrs: {
+            type: 'text'
+          }
+        })
+        .then((response) => {
+          console.log(response);
+          if(fs.existsSync(filePath)){
+            console.log("Copying " + filePath + " to " + response)
+            fs.copyFile(filePath, response, (err) => {
+              if(err){
+                console.log(err);
+              } else {
+                win.webContents.send('fileCRUD');
+              }
+            })
+          } else {
+            console.log("Does not exist");
+          }
+        })
+      }
+  })
+  .catch(console.error);
+})
+
+
+ipcMain.on('fileMove', () => {
+  ePrompt({
+    title: 'Move A File',
+    label: 'Move A File from this Directory to Another',
+    value: '',
+    inputAttrs: {
+        type: 'text'
+    }
+  })
+  .then((r) => {
+      if(r === null) {
+        return;
+      } else {
+        let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
+        ePrompt({
+          title: 'Enter Directory',
+          label: 'Enter a Directory to move ' + r + ' to',
+          value: '',
+          inputAttrs: {
+            type: 'text'
+          }
+        })
+        .then((response) => {
+          if(fs.existsSync(filePath)){
+            fs.rename(filePath, response, (err) => {
+              if(err){
+                console.log(err);
+              } else {
+                console.log("Moved");
+                win.webContents.send('fileCRUD');
+              }
+            })
+          } else {
+            console.log("Does not exist");
+          }
+        })
+      }
+  })
+  .catch(console.error);
+})
+
+
+
 ipcMain.on('directoryMake', () => {
   ePrompt({
     title: 'Create a Directory',
@@ -158,25 +244,7 @@ ipcMain.on('directoryDelete', () => {
   .catch(console.error);
 })
 
-ipcMain.on('fileCopy', () => {
-  ePrompt({
-    title: 'Copy a File',
-    label: 'Copy a File in this Directory',
-    value: '',
-    inputAttrs: {
-        type: 'text'
-    }
-  })
-  .then((r) => {
-      if(r === null) {
-          console.log('user cancelled');
-      } else {
-        let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
-        
-      }
-  })
-  .catch(console.error);
-})
+
 
 ipcMain.on('backgroundChange', () => {
   ePrompt({

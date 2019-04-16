@@ -35,7 +35,14 @@ const template = [
           click(item, focusedWindow){
             ipcMain.emit('directoryDelete');
           }
+        },
+        {
+          label: 'Copy File',
+          click(item, focusedWindow){
+            ipcMain.emit('fileCopy');
+          }
         }
+
 
     ]
   },
