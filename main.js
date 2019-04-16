@@ -172,7 +172,6 @@ ipcMain.on('fileMove', () => {
               if(err){
                 console.log(err);
               } else {
-                console.log("Moved");
                 win.webContents.send('fileCRUD');
               }
             })

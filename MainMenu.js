@@ -19,12 +19,6 @@ const template = [
             }
         },
         {
-            label: 'Move',
-            click(item, focusedWindow){
-                ipcMain.emit('fileMove');
-            }
-        },
-        {
           label: 'Make Directory',
           click(item, focusedWindow){
             ipcMain.emit('directoryMake');
@@ -40,6 +34,12 @@ const template = [
           label: 'Copy File',
           click(item, focusedWindow){
             ipcMain.emit('fileCopy');
+          }
+        },
+        {
+          label: 'Move File',
+          click(item, focusedWindow){
+            ipcMain.emit('fileMove');
           }
         }
 
