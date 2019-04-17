@@ -262,19 +262,6 @@ ipcMain.on('backgroundChange', () => {
   .catch(console.error);
 })
 
-//User has requested information for a file or directory
-ipcMain.on('fileInfo', (event, data) => {
-  // let info = new BrowserWindow({ 
-  //   width: 400,
-  //   height: 400, 
-  //   nodeIntegration: true,
-
-  // })
-  // info.customProps = {
-  //   data: data
-  // }
-  // win.setMenu(null);
-})
 
 //Fetches the files at a given directory
 function fetchFilesAt(directory, event){
@@ -305,7 +292,7 @@ function hideHiddenFiles(files, directory){
 
   for (const file in filesToShow) {
     let filePath = (isRoot ? '/' : '/' + currentDir.slice(1).join('/') + '/' + filesToShow[file]);
-    let stat = fs.lstatSync(filePath);
+    let stat = fs.statSync(filePath);
     let info = {
       path: filePath,
       stat: stat,

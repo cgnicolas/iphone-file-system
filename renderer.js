@@ -46,13 +46,13 @@ navBarContainer.x = 0;
 navBarContainer.y = 0;
 navBarContainer.width = window.innerWidth;
 navBarContainer.height = 40;
-console.log("Here");
+
 
 //White Background for Nav Bar
 let cBackground = new PIXI.Sprite.fromImage('images/cBackground.svg');
 cBackground.width = wWidth
 cBackground.height = 40;
-console.log(navBarContainer, cBackground);
+
 
 //Back Button
 let cBack = new PIXI.Text('../', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
@@ -70,7 +70,6 @@ cNext.on('click', () => {
     currentPage++;
     checkPage();
     displayPage(currentPage);
-    console.log("Go Next");
 })
 //Previous Page Button
 let cPrev = new PIXI.Text('Prev', {fontFamily : 'Helvetica Neue', fill : 0x000000, fontSize:12, align : 'center'})
@@ -81,7 +80,7 @@ cPrev.on('click', () => {
     currentPage--;
     checkPage();
     displayPage(currentPage)
-    console.log("Go Prev");
+
 })
 
 //Adding children to their respective container
@@ -108,7 +107,25 @@ class File {
             }
         })
         this.sprite.on('rightclick', (e) => {
-            let string = "FilePath: " + this.filepath + "\n Last Modification Time: " + this.stat.mtime + "\n Creation Time:" + this.stat.birthtime;
+            console.log(this.stat);
+            let ampm = "";
+            let modifyTime = new Date(this.stat.mtime);
+            if(parseInt(modifyTime.getHours()) >= 12){
+                ampm = "PM"
+            } else {
+                ampm = "AM"
+            }
+            let modifyString = modifyTime.getMonth() + "-" + modifyTime.getDate() + "-" + modifyTime.getFullYear() + " " + ((parseInt(modifyTime.getHours()) % 12) + 1) + ":" + modifyTime.getMinutes() + " " + ampm;
+            let accessTime = new Date(this.stat.birthtime);
+            if(parseInt(accessTime.getHours) >= 12){
+                ampm = "PM"
+            } else {
+                ampm = "AM"
+            }
+            let accessString = accessTime.getMonth() + "-" + accessTime.getDate() + "-" + accessTime.getFullYear() + " " + ((parseInt(accessTime.getHours()) % 12) + 1) + ":" + accessTime.getMinutes() + " " + ampm;
+            
+            let fileSize = this.stat.size + " bytes";
+            let string = "FilePath: " + this.filepath + "\n Last Modification Time: " + modifyString + "\n Creation Time:" + accessString + "\n Size: " + fileSize;
             alert(string)
         })
         this.sprite.on('touchstart', this.onButtonDown);
@@ -167,7 +184,6 @@ function displayPage(page){
 //Handles the new files and creates respsective sprites
 function handleFileReply(data){
     pages = []
-    console.log(data);
     if(!data.isRoot){
         //TODO: Render back button
         navBarContainer.addChild(cBack);
@@ -182,13 +198,13 @@ function handleFileReply(data){
         let size = 65;
         //Making rows
         if((parseInt(file) != 0) && (parseInt(file) % 7 === 0)){
-            console.log("It equals zero");
+
             x = 26.5;
             y += 110;
         }
         //Resetting pages
         if((parseInt(file) !== 0) && (parseInt(file) % 35 === 0)){
-            console.log("Page change");
+
             x = 26.5;
             y = 60;
         }
@@ -230,7 +246,6 @@ function handleFileReply(data){
 //Check if page is within page bounds
 function checkPage(){
     if(pages.length > 1 && currentPage != pages.length - 1){
-        console.log(navBarContainer.width, cNext.x);
         navBarContainer.addChild(cNext);
     } else {
         navBarContainer.removeChild(cNext);
