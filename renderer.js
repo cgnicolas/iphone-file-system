@@ -220,7 +220,7 @@ function handleFileReply(data){
         text.y = size;
         
         //File sprite
-        let sprite = new PIXI.Sprite.fromImage('images/fileSprite.svg');
+        let sprite = new PIXI.Sprite.fromImage(data.files[file].isDirectory ? 'images/fileSprite.svg' : 'images/AppleLogo.svg.png');
         sprite.width = size;
         sprite.height = size;
         
