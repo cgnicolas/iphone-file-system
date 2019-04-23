@@ -115,7 +115,7 @@ ipcMain.on('fileCopy', () => {
         let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
         ePrompt({
           title: 'Enter Directory',
-          label: 'Enter a Directory to copy ' + r + ' to',
+          label: 'Enter a FilePath to copy ' + r + ' to',
           value: '',
           inputAttrs: {
             type: 'text'
@@ -158,7 +158,7 @@ ipcMain.on('fileMove', () => {
         let filePath = (this.isRoot ? '/' + r : '/' + currentDir.slice(1).join('/') + '/' + r);
         ePrompt({
           title: 'Enter Directory',
-          label: 'Enter a Directory to move ' + r + ' to',
+          label: 'Enter a FilePath to move ' + r + ' to',
           value: '',
           inputAttrs: {
             type: 'text'
