@@ -13,8 +13,14 @@ function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({ 
     width: 1280,
-    height: 800, 
-    nodeIntegration: true,
+    height: 800,
+    minHeight: 800,
+    minWidth: 1280,
+    maxHeight: 800,
+    maxWidth: 1280,
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
   win.loadFile('index.html')
   require('./MainMenu.js')

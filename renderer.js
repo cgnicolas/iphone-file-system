@@ -148,6 +148,7 @@ ipc.on('fileReply', (event ,data) => {
 })
 //Refresh page
 ipc.on('fileCRUD', (event, data) => {
+    console.log("fileCRUD");
     currentPage = 0;
     ipc.send('files', 'currentDir');
 })
